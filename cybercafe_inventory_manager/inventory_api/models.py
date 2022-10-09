@@ -1,4 +1,10 @@
+from random import choices
 from django.db import models
+from django.forms import JSONField
+from multiselectfield import MultiSelectField
+
+
+port_type_choices = (('1','vga'), ('2','hdmi'), ('3','optical'))
 
 # Create your models here.
 class Computer(models.Model):
@@ -33,3 +39,15 @@ class Keyboard(models.Model):
 
     def __str__(self):
         return self.brand
+
+
+
+class Monitor(models.Model):
+    brand = models.CharField(max_length=100)
+    model = models.CharField(max_length=100)
+    screen_resolution = models.CharField(max_length=100)   
+    port_types = MultiSelectField(max_length=20 , choices=port_type_choices, max_choices=3)
+
+    def __str__(self):
+        return self.brand
+

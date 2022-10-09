@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 from rest_framework import serializers
-from inventory_api.models import Computer, Mouse, Keyboard
-
+from inventory_api.models import Computer, Mouse, Keyboard, Monitor
+import json
 
 #for the computer entity
 class ComputerSerializer(serializers.ModelSerializer):
@@ -40,3 +40,17 @@ class KeyboardSerializer(serializers.ModelSerializer):
         if data['has_numeric_keypad'] not in options and data["has_backlight"] not in options:
             raise ValidationError("has_numeric_keypad must be either yes or no")
         return data
+
+
+class MonitorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Monitor
+        fields = "__all__"
+
+    # def validate(self, data):
+    #     type_options = ["vga","hdmi","Optical"]
+    #     dict_value = json.loads(data['ports_and_types'])
+    #     for type in dict_value.values():
+    #         if type not in type_options:
+    #             raise ValidationError("Port_types must be either vga, hdmi, or optical")
+    #     return data

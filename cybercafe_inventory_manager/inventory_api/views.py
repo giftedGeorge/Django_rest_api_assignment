@@ -1,7 +1,7 @@
 from requests import delete
 from rest_framework.views import APIView
-from inventory_api.models import Computer, Mouse, Keyboard
-from inventory_api.serializer import ComputerSerializer, MouseSerializer, KeyboardSerializer
+from inventory_api.models import Computer, Mouse, Keyboard, Monitor
+from inventory_api.serializer import ComputerSerializer, MouseSerializer, KeyboardSerializer, MonitorSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -120,7 +120,7 @@ class Edit_Keyboard(APIView):
         return Response(serializer.data)
 
     def put(self, request, pk):
-        keyboard = self.get_mouse_by_pk(pk)
+        keyboard = self.get_keyboard_by_pk(pk)
         serializer = KeyboardSerializer(keyboard, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -130,4 +130,47 @@ class Edit_Keyboard(APIView):
     def delete(self, request, pk):
         keyboard = self.get_keyboard_by_pk(pk)
         keyboard.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+#for the monitor entity
+class List_Monitors(APIView):
+    def get(self, request):
+        monitor = Monitor.objects.all()
+        serializer = MonitorSerializer(monitor, many=True)
+        return Response(serializer.data)
+
+class Create_Monitor(APIView):
+    def post(self, request):
+        serializer = MonitorSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class Edit_Monitor(APIView):
+    def get_monitor_by_pk(self, pk):
+        try:
+            return Monitor.objects.get(pk=pk)
+        except:
+            return Response({'Error!': 'Monitor with such id does not exist'}, status=status.HTTP_404_NOT_FOUND )
+
+    def get(self, request, pk):
+        monitor = self.get_monitor_by_pk(pk)
+        serializer = MonitorSerializer(monitor)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        monitor = self.get_monitor_by_pk(pk)
+        serializer = MonitorSerializer(monitor, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        monitor = self.get_monitor_by_pk(pk)
+        monitor.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
