@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 from rest_framework import serializers
-from inventory_api.models import Mouse
-from inventory_api.models import Computer
+from inventory_api.models import Computer, Mouse, Keyboard
+
 
 #for the computer entity
 class ComputerSerializer(serializers.ModelSerializer):
@@ -27,3 +27,16 @@ class MouseSerializer(serializers.ModelSerializer):
         if value not in options:
             raise ValidationError("type must be either wireless or wired")
         return value
+
+
+#for the keyboard entity
+class KeyboardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Keyboard
+        fields = "__all__"
+
+    def validate(self, data):
+        options = ["yes","no"]
+        if data['has_numeric_keypad'] not in options and data["has_backlight"] not in options:
+            raise ValidationError("has_numeric_keypad must be either yes or no")
+        return data

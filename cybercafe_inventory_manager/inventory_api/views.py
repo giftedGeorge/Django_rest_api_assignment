@@ -1,7 +1,7 @@
 from requests import delete
 from rest_framework.views import APIView
-from inventory_api.models import Computer, Mouse
-from inventory_api.serializer import ComputerSerializer, MouseSerializer
+from inventory_api.models import Computer, Mouse, Keyboard
+from inventory_api.serializer import ComputerSerializer, MouseSerializer, KeyboardSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -87,4 +87,47 @@ class Edit_Mouse(APIView):
     def delete(self, request, pk):
         mouse = self.get_mouse_by_pk(pk)
         mouse.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+#for the keyboard entity
+class List_Keyboards(APIView):
+    def get(self, request):
+        keyboard = Keyboard.objects.all()
+        serializer = KeyboardSerializer(keyboard, many=True)
+        return Response(serializer.data)
+
+class Create_Keyboard(APIView):
+    def post(self, request):
+        serializer = KeyboardSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class Edit_Keyboard(APIView):
+    def get_keyboard_by_pk(self, pk):
+        try:
+            return Keyboard.objects.get(pk=pk)
+        except:
+            return Response({'Error!': 'Keyboard with such id does not exist'}, status=status.HTTP_404_NOT_FOUND )
+
+    def get(self, request, pk):
+        keyboard = self.get_keyboard_by_pk(pk)
+        serializer = KeyboardSerializer(keyboard)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        keyboard = self.get_mouse_by_pk(pk)
+        serializer = KeyboardSerializer(keyboard, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        keyboard = self.get_keyboard_by_pk(pk)
+        keyboard.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
